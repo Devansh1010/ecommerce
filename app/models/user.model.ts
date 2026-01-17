@@ -1,12 +1,13 @@
 import { Schema, model, models } from 'mongoose'
 import type { User, Address } from '@/types/user.types'
+import { ADDRESS_LABEL, USER_ROLE } from '../lib/constants/user.constant'
 
 const AddressSchema = new Schema<Address>(
     {
         label: {
             type: String,
-            enum: ['home', 'office', 'other'],
-            default: 'home',
+            enum: Object.values(ADDRESS_LABEL),
+            default: ADDRESS_LABEL.HOME,
         },
         name: { type: String, required: true },
         phone: { type: String, required: true },
@@ -29,15 +30,15 @@ const UserSchema = new Schema<User>(
             unique: true,
             lowercase: true,
         },
-        passwordHash: { type: String, required: true },
+        passwordHash: { type: String, required: true, select: false },
         phone: String,
 
         role: {
             type: String,
-            enum: ['customer', 'admin', 'staff'],
-            default: 'customer',
+            enum: Object.values(USER_ROLE),
+            default: USER_ROLE.CUSTOMER,
         },
-        
+
         //Insted of delete the user make it false to restict user form login
         isActive: { type: Boolean, default: true },
 
