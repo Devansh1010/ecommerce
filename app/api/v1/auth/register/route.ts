@@ -1,15 +1,13 @@
-import { NextResponse } from 'next/server'
 import { registerUser } from '@/app/lib/services/auth.service'
+import { HTTP_STATUS } from '@/app/lib/constants/http-status.constant'
+import { errorResponse, successResponse } from '@/app/lib/utils/api-responce'
 
 export async function POST(req: Request) {
     try {
         const body = await req.json()
 
         if (!body.email || !body.name || !body.password || !body.phone) {
-            return NextResponse.json(
-                { message: 'Please Provide All Credentials' },
-                { status: 400 }
-            )
+            return errorResponse('Please provide all the credentials', HTTP_STATUS.BAD_REQUEST)
         }
 
         const user = await registerUser({
@@ -19,14 +17,9 @@ export async function POST(req: Request) {
             phone: body.phone,
         })
 
-        return NextResponse.json(
-            { message: 'User registered successfully', user },
-            { status: 201 }
-        )
+        return successResponse(user, HTTP_STATUS.CREATED, "User Created Successfully")
+        
     } catch (error: any) {
-        return NextResponse.json(
-            { error: error.message || 'Registration failed' },
-            { status: 400 }
-        )
+        return errorResponse('Error Occured while Registering User', HTTP_STATUS.CONFLICT)
     }
 }
